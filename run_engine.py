@@ -8,6 +8,7 @@ ENGINE_PATH = './engines/stockfish/stockfish-windows-x86-64-avx2.exe'
 
 
 async def eval_fen() -> None:
+    """Return score for a given postion"""
     transport, engine = await chess.engine.popen_uci(ENGINE_PATH)
 
     board = chess.Board("r1b1q1k1/pp2b1pp/2p5/2npPQ2/3P4/1P2B3/P1PN2PP/R5K1 w - - 1 17")
@@ -17,15 +18,15 @@ async def eval_fen() -> None:
     await engine.quit()
 
 
-async def get_best_lines():
-    # Start the engine
+async def get_best_lines(n=1):
+    """Returns the n best lines for a given position"""
     transport, engine = await chess.engine.popen_uci(ENGINE_PATH)
     
     # Create a chess board (initial position or use any FEN)
     board = chess.Board("r1b1q1k1/pp2b1pp/2p5/2npPQ2/3P4/1P2B3/P1PN2PP/R5K1 w - - 1 17")
 
     # Analyze the position to get the best lines with evaluations
-    info = await engine.analyse(board, chess.engine.Limit(depth=20), multipv=3)  # multipv=3 for top 3 lines
+    info = await engine.analyse(board, chess.engine.Limit(depth=20), multipv=n)  # multipv=3 for top 3 lines
     
     # Print the best lines, evaluations, and moves
     for eval in info:
