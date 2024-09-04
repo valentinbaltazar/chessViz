@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import pprint
 
 import json
 import os
@@ -57,9 +58,10 @@ def plot_elo(df, time_class='rapid', time_control='600', user_name='river650'):
     # plot.figure.suptitle('ELO Rating vs Time', y=1.02)
     plot.figure.set_size_inches(12, 8)
     plt.xticks(rotation=45)
-    # plt.show()
+    plt.show()
 
     fig = plot.figure
+
     return fig
 
 
@@ -89,9 +91,78 @@ def save_all_games(user_name='river650'):
     df.to_csv(file_path)
 
 
+def get_wins(user_name='river650', games_obj=None):
+    """Return total number of wins for given player from Games object"""
+    # Keep totals
+    wins_as_white = 0
+    wins_as_black = 0
+    # print(games_obj)
+    # return None
+
+    for game in games_obj['games']:
+        end_time = game['end_time']
+        end_date = datetime.datetime.fromtimestamp(end_time)
+        date = end_date.strftime('%Y-%m')
+
+        wins_as_white += np.where((game['white']['username']==user_name) and (game['white']['result']=='win'), 1, 0)
+        wins_as_black += np.where((game['black']['username']==user_name) and (game['black']['result']=='win'), 1, 0)
+
+
+    return {'wins_as_white': wins_as_white, 'wins_as_black': wins_as_black, 'end_date': date}
+
+def plot_wins(user_name='river650'):
+    file_path = './player_data/{user_name}.csv'.format(user_name=user_name)
+    df = pd.read_csv(file_path)
+
+    wins_data = []
+
+    for game_obj in df['games_obj']:
+        # print(game_obj)
+
+        game_obj_json = json.loads(game_obj)
+        wins_data.append(get_wins(user_name, game_obj_json))
+
+    wins_df = pd.DataFrame(wins_data)
+    print(wins_df.head(20))
+        
+    # Melt the DataFrame to make it suitable for Seaborn
+    df_melted = wins_df.melt(id_vars='end_date', value_vars=['wins_as_black', 'wins_as_white'],
+                        var_name='Color', value_name='Wins')
+
+    # Create the bar plot
+    plt.figure(figsize=(10, 6))
+    sns.barplot(data=df_melted, x='end_date', y='Wins', hue='Color')
+
+    # Add titles and labels
+    plt.title('Total Wins as Black/White Over Time')
+    plt.xlabel('Date')
+    plt.ylabel('Number of Wins')
+
+    # Display the plot
+    plt.xticks(rotation=45)  # Rotate x labels for better readability
+    plt.show()
+
+
+def view_data(user_name='river650', item=0):
+    """Format the Games object for viewing"""
+    file_path = './player_data/{user_name}.csv'.format(user_name=user_name)
+    df = pd.read_csv(file_path)
+
+    print(df.head())
+
+    game_obj_json = json.loads(df['games_obj'][item])
+
+    pprint.pprint(game_obj_json, indent=4)
+
+
+
 
 if __name__ == '__main__':
-    save_all_games()
-    df = pd.read_csv('./player_data/river650.csv')
-    print(df.head())
-    plot_elo(df, 'rapid', '1800')
+    # save_all_games()
+    # df = pd.read_csv('./player_data/river650.csv')
+    # print(df.head())
+    # plot_elo(df, 'rapid', '1800')
+
+    view_data('river650', item=0)
+
+    # plot_wins()

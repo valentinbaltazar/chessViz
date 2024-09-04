@@ -1,7 +1,10 @@
 """API to serve relevant plots"""
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+import requests
 
 import matplotlib.pyplot as plt
 import io
@@ -21,8 +24,14 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+
+class PlotType(BaseModel):
+    selectedOption: str
+
+
+
 @app.get("/get-plot")
-async def get_plot():
+async def get_plot(option: str):
     df = pd.read_csv('./player_data/river650.csv')
     print(df.head())
    
@@ -34,7 +43,13 @@ async def get_plot():
     buf.seek(0)
     plt.close(fig)  # Close the figure to free up memory
   
-    return StreamingResponse(buf, media_type="image/png")
+    if option == 'Option 1':
+        return StreamingResponse(buf, media_type="image/png")
+    else:
+        return "Not Option 1"
+ 
+    
+  
 
 if __name__ == "__main__":
     import uvicorn
