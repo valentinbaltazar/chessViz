@@ -8,7 +8,7 @@ import pprint
 import json
 import os
 import datetime
-
+import io
 
 from pub_api import games_archive_list, game_url
 
@@ -32,8 +32,10 @@ def get_elo(game):
 
     return {'white_player': white_player,'white_elo': white_elo,'black_player': black_player,'black_elo': black_elo,'end_date': date}
 
-def plot_elo(df, time_class='rapid', time_control='600', user_name='river650'):
+def plot_elo(user_name='river650', time_class='rapid', time_control='600'):
     """From player df plot elo vs time"""
+    file_path = './player_data/{user_name}.csv'.format(user_name=user_name)
+    df = pd.read_csv(file_path)
     elo_info = []
     for game_obj in df['games_obj']:
         # print(game_obj)
@@ -130,17 +132,30 @@ def plot_wins(user_name='river650'):
                         var_name='Color', value_name='Wins')
 
     # Create the bar plot
-    plt.figure(figsize=(10, 6))
-    sns.barplot(data=df_melted, x='end_date', y='Wins', hue='Color')
+    # plt.figure(figsize=(10, 6))
+    sns.set_theme(style='whitegrid')
+    plot = sns.barplot(data=df_melted, x='end_date', y='Wins', hue='Color')
 
-    # Add titles and labels
-    plt.title('Total Wins as Black/White Over Time')
-    plt.xlabel('Date')
-    plt.ylabel('Number of Wins')
-
-    # Display the plot
-    plt.xticks(rotation=45)  # Rotate x labels for better readability
+    # plot.set_axis_labels('Date', 'Wins')
+    # plot.figure.suptitle('ELO Rating vs Time', y=1.02)
+    plot.figure.set_size_inches(10, 6)
+    plt.xticks(rotation=45)
     plt.show()
+
+    fig = plot.figure
+
+    return fig
+
+    # # Add titles and labels
+    # plt.title('Total Wins as Black/White Over Time')
+    # plt.xlabel('Date')
+    # plt.ylabel('Number of Wins')
+
+    # # Display the plot
+    # plt.xticks(rotation=45)  # Rotate x labels for better readability
+    # plt.show()
+
+    # # return 
 
 
 def view_data(user_name='river650', item=0):
@@ -163,6 +178,6 @@ if __name__ == '__main__':
     # print(df.head())
     # plot_elo(df, 'rapid', '1800')
 
-    view_data('river650', item=0)
+    # view_data('river650', item=0)
 
-    # plot_wins()
+    plot_wins()

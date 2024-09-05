@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 import io
 import pandas as pd
 
-from profile_plots import plot_elo
+from profile_plots import plot_elo, plot_wins
+from opening_tree import get_tree
 
 app = FastAPI()
 
@@ -32,19 +33,27 @@ class PlotType(BaseModel):
 
 @app.get("/get-plot")
 async def get_plot(option: str):
-    df = pd.read_csv('./player_data/river650.csv')
-    print(df.head())
-   
-    fig =  plot_elo(df, 'rapid', '1800')
-    
-    # Save plot to a bytes buffer
-    buf = io.BytesIO()
-    fig.savefig(buf, format='png')
-    buf.seek(0)
-    plt.close(fig)  # Close the figure to free up memory
-  
+    """Get requested plot from Option value"""
     if option == 'Option 1':
+        fig = plot_elo('river650', 'rapid', '1800')
+
+        # Save plot to a bytes buffer
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png')
+        buf.seek(0)
+        plt.close(fig)  # Close the figure to free up memory
         return StreamingResponse(buf, media_type="image/png")
+    elif option == 'Option 2':
+        fig = plot_wins('river650')
+        
+        # Save plot to a bytes buffer
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png')
+        buf.seek(0)
+        plt.close(fig)  # Close the figure to free up memory
+        return StreamingResponse(buf, media_type="image/png")
+    elif option == 'Option 3':
+        return {"tree": get_tree()}
     else:
         return "Not Option 1"
  
