@@ -1,0 +1,2 @@
+Use this directory to install a chess agme engine such as Stockfish
+You will need the path to the executable (Example: './engines/stockfish/stockfish-windows-x86-64-avx2.exe')
