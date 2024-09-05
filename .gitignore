@@ -1,0 +1,5 @@
+test/
+backend/engines/stockfish/
+frontend/node_modules/
+frontend/public/
+__pycache__/
