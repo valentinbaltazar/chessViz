@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 function DataType({ onSubmit }) {
-  const [selectedOption, setSelectedOption] = useState('test');
+  const [selectedOption, setSelectedOption] = useState('None');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -12,12 +12,13 @@ function DataType({ onSubmit }) {
     <div>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="options">Select an option:</label>
+          <label htmlFor="options">Plot Type:</label>
           <select
             id="options"
             value={selectedOption}
             onChange={(e) => setSelectedOption(e.target.value)}
           >
+            <option value="None" disabled>Select an option:</option>
             <option value="Option 1">Elo Rating</option>
             <option value="Option 2">Match Wins</option>
             <option value="Option 3">Openings</option>

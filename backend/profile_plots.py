@@ -60,7 +60,7 @@ def plot_elo(user_name='river650', time_class='rapid', time_control='600'):
     # plot.figure.suptitle('ELO Rating vs Time', y=1.02)
     plot.figure.set_size_inches(12, 8)
     plt.xticks(rotation=45)
-    plt.show()
+    # plt.show()
 
     fig = plot.figure
 
@@ -140,22 +140,11 @@ def plot_wins(user_name='river650'):
     # plot.figure.suptitle('ELO Rating vs Time', y=1.02)
     plot.figure.set_size_inches(10, 6)
     plt.xticks(rotation=45)
-    plt.show()
+    # plt.show()
 
     fig = plot.figure
 
     return fig
-
-    # # Add titles and labels
-    # plt.title('Total Wins as Black/White Over Time')
-    # plt.xlabel('Date')
-    # plt.ylabel('Number of Wins')
-
-    # # Display the plot
-    # plt.xticks(rotation=45)  # Rotate x labels for better readability
-    # plt.show()
-
-    # # return 
 
 
 def view_data(user_name='river650', item=0):

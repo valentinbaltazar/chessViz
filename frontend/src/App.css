@@ -1,6 +1,7 @@
 .App {
   display: flex;
   flex-direction: column;
+  background-color: rgb(32, 35, 37);
   height: 100vh;
   padding: 20px;
   box-sizing: border-box;
@@ -15,22 +16,25 @@
 
 .toolbar {
   width: 25%;
-  background-color: #f0f0f0;
+  background-color: rgb(42, 45, 47);
+  color: white;
   padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
 }
 
 .plot-area {
   flex: 1;
-  background-color: #fff;
+  background-color: rgb(24, 26, 27);
+  color: white;
   padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
 }
 
 .dashboard {
   height: 150px;
   width: 100%;
-  background-color: #e0e0e0;
+  background-color: rgb(42, 45, 47);
+  color: white;
   padding: 15px;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px -2px 4px;
 }

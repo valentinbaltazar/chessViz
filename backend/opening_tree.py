@@ -65,7 +65,7 @@ def build_tree(games, player_color="white", max_depth=3):
                         for existing_child in node.children:
                             if existing_child.name == move_san:
                                 child = existing_child
-                                print(f"Looking at move: {move_san}")
+                                # print(f"Looking at move: {move_san}")
                                 # if move_san in move_totals:
                                 #     move_totals[move_san] += 1
                                 # else:
@@ -73,7 +73,7 @@ def build_tree(games, player_color="white", max_depth=3):
 
                                 # Increment dict mainline value
                                 child_anc = [n.name for n in existing_child.ancestors] + [existing_child.name]
-                                print(child_anc)
+                                # print(child_anc)
                                 anc_key = '_'.join(child_anc)
                                 if anc_key in main_lines:
                                     main_lines[anc_key] += 1
@@ -93,7 +93,7 @@ def build_tree(games, player_color="white", max_depth=3):
 
                             # Make a dict entry for each mianline
                             ancestors = [n.name for n in child.ancestors] + [child.name]
-                            print(ancestors)
+                            # print(ancestors)
                             anc_key = '_'.join(ancestors)
                             if anc_key in main_lines:
                                 main_lines[anc_key] += 1
@@ -108,8 +108,8 @@ def build_tree(games, player_color="white", max_depth=3):
                         current_depth += 1
                     
                 board.push(move)
-    print(move_totals)
-    print(main_lines)
+    # print(move_totals)
+    # print(main_lines)
     # Add leaf node with mainline counts
 
     # child_mainline = Node('1', parent=child)
@@ -127,7 +127,7 @@ def print_tree(root):
     for pre, _, node in RenderTree(root):
         output_tree += f"{pre}{node.name}\n"
         # print(f"{pre}{node.name}")
-    print(output_tree)
+    # print(output_tree)
 
     return output_tree
 
