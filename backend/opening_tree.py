@@ -2,10 +2,7 @@
 
 import chess.pgn
 import pandas as pd
-import matplotlib.pyplot as plt
-import pprint
 import json
-import numpy as np
 
 from anytree import Node, RenderTree
 import chess.pgn

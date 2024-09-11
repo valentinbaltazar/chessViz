@@ -32,7 +32,7 @@ def get_elo(game):
 
     return {'white_player': white_player,'white_elo': white_elo,'black_player': black_player,'black_elo': black_elo,'end_date': date}
 
-def plot_elo(user_name='river650', time_class='rapid', time_control='600'):
+def plot_elo(user_name='river650', time_class='rapid', time_control='600',  testing=False):
     """From player df plot elo vs time"""
     file_path = './player_data/{user_name}.csv'.format(user_name=user_name)
     df = pd.read_csv(file_path)
@@ -60,7 +60,9 @@ def plot_elo(user_name='river650', time_class='rapid', time_control='600'):
     # plot.figure.suptitle('ELO Rating vs Time', y=1.02)
     plot.figure.set_size_inches(12, 8)
     plt.xticks(rotation=45)
-    # plt.show()
+
+    if testing:
+        plt.show()
 
     fig = plot.figure
 
@@ -165,8 +167,8 @@ if __name__ == '__main__':
     # save_all_games()
     # df = pd.read_csv('./player_data/river650.csv')
     # print(df.head())
-    # plot_elo(df, 'rapid', '1800')
+    plot_elo('river650', 'rapid', '1800', testing=True)
 
     # view_data('river650', item=0)
 
-    plot_wins()
+    # plot_wins()

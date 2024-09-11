@@ -3,3 +3,7 @@ numpy
 pandas
 chess
 fastapi
+seaborn
+requests
+anytree
+uvicorn

@@ -1,14 +1,12 @@
 """API to serve relevant plots"""
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-import requests
 
 import matplotlib.pyplot as plt
 import io
-import pandas as pd
 
 from profile_plots import plot_elo, plot_wins
 from opening_tree import get_tree
@@ -35,7 +33,7 @@ class PlotType(BaseModel):
 async def get_plot(option: str):
     """Get requested plot from Option value"""
     if option == 'Option 1':
-        fig = plot_elo('river650', 'rapid', '1800')
+        fig = plot_elo('river650', 'rapid', '1800', testing=False)
 
         # Save plot to a bytes buffer
         buf = io.BytesIO()
