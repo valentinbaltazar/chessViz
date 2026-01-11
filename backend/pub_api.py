@@ -1,64 +1,95 @@
 """Get different endpoints from PubAPI chess.com"""
 import requests
-import json
-import datetime
+from config import USER_AGENT
+
+class ChessAPIError(Exception):
+    """Custom exception for Chess.com API errors"""
+    pass
+
+
+def get_headers():
+    """Return headers for Chess.com API requests"""
+    return {'User-Agent': USER_AGENT}
+
 
 def player_profile(username):
-    url = "https://api.chess.com/pub/player/{username}".format(username=username)
-    response = requests.get(url, headers = {'User-Agent': 'username: river650, email: valentin.urena@gmail.com'})
-
-    data = response.json()
-
-    print(data)
+    """Get player profile information from Chess.com"""
+    url = f"https://api.chess.com/pub/player/{username}"
+    try:
+        response = requests.get(url, headers=get_headers(), timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as e:
+        if response.status_code == 404:
+            raise ChessAPIError(f"Player '{username}' not found on Chess.com")
+        raise ChessAPIError(f"Chess.com API error: {e}")
+    except requests.exceptions.RequestException as e:
+        raise ChessAPIError(f"Network error: {e}")
 
 
 def games_archive_list(username):
-    """Description: Array of monthly archives available for this player."""
-    url = "https://api.chess.com/pub/player/{username}/games/archives".format(username=username)
-    response = requests.get(url, headers = {'User-Agent': 'username: river650, email: valentin.urena@gmail.com'})
-
-    data = response.json()
-
-    # print(data)
-
-    return data
+    """Get array of monthly archives available for this player."""
+    url = f"https://api.chess.com/pub/player/{username}/games/archives"
+    try:
+        response = requests.get(url, headers=get_headers(), timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as e:
+        if response.status_code == 404:
+            raise ChessAPIError(f"Player '{username}' not found or has no games")
+        raise ChessAPIError(f"Chess.com API error: {e}")
+    except requests.exceptions.RequestException as e:
+        raise ChessAPIError(f"Network error: {e}")
 
 
 def games_by_month(username, year, month):
-    """Description: Array of Live and Daily Chess games that a player has finished.
-        URL pattern: https://api.chess.com/pub/player/{username}/games/{YYYY}/{MM}
+    """Get array of games that a player has finished for a specific month.
 
-        "YYYY" is the four digit year of the game-end
-        "MM" is the two-digit month"""
-    
-    url = "https://api.chess.com/pub/player/{username}/games/{YYYY}/{MM}".format(username=username, YYYY=year, MM=month)
-    response = requests.get(url, headers = {'User-Agent': 'username: river650, email: valentin.urena@gmail.com'})
+    Args:
+        username: Chess.com username
+        year: Four digit year (YYYY)
+        month: Two digit month (MM)
 
-    data = response.json()
-
-    print(data)
+    Returns:
+        Dict containing games array
+    """
+    url = f"https://api.chess.com/pub/player/{username}/games/{year}/{month}"
+    try:
+        response = requests.get(url, headers=get_headers(), timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as e:
+        raise ChessAPIError(f"Chess.com API error: {e}")
+    except requests.exceptions.RequestException as e:
+        raise ChessAPIError(f"Network error: {e}")
 
 
 def game_url(game_url):
-    """Url will return a Game object"""
-    # print(game_url)
-    response = requests.get(game_url, headers = {'User-Agent': 'username: river650, email: valentin.urena@gmail.com'})
-    data = response.json()
+    """Fetch game data from a Chess.com archive URL.
 
-    # print(type(data))
+    Args:
+        game_url: Full URL to a monthly archive
 
-    print(json.dumps(data, indent=4))
-    pgn = data['games'][0]['pgn']
-    # print(pgn)
-
-    return data
-
+    Returns:
+        Dict containing games array
+    """
+    try:
+        response = requests.get(game_url, headers=get_headers(), timeout=30)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as e:
+        raise ChessAPIError(f"Chess.com API error: {e}")
+    except requests.exceptions.RequestException as e:
+        raise ChessAPIError(f"Network error: {e}")
 
 
 if __name__ == '__main__':
-    # player_profile('river650')
-    all_games = games_archive_list('river650')
-    example = game_url(all_games['archives'][0])
-    # get_elo(example)
-    # games_by_month('river650', '2024', '07')
+    # Test the API functions
+    try:
+        profile = player_profile('river650')
+        print(f"Profile: {profile.get('username', 'Unknown')}")
 
+        archives = games_archive_list('river650')
+        print(f"Archives available: {len(archives.get('archives', []))}")
+    except ChessAPIError as e:
+        print(f"Error: {e}")

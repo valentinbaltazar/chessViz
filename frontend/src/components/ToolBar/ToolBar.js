@@ -1,56 +1,82 @@
 import React, { useState } from 'react';
+import { fetchUser, checkUser } from '../../services/api';
+import { Loading } from '../Common';
+import './ToolBar.css';
 
-function Toolbar() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [response, setResponse] = useState('');
+function Toolbar({ onUserChange, currentUser }) {
+  const [username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState(''); // 'success' or 'error'
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!username.trim()) {
+      setMessage('Please enter a username');
+      setMessageType('error');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
 
     try {
-      const res = await fetch('http://localhost:8000/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email }),
-      });
+      // First check if user data already exists
+      const checkResult = await checkUser(username);
 
-      const data = await res.json();
-      setResponse(data.message);
+      if (checkResult.exists) {
+        setMessage(`Data loaded for ${username}`);
+        setMessageType('success');
+        onUserChange(username.toLowerCase(), true);
+      } else {
+        // Need to fetch user data
+        setMessage('Fetching games from Chess.com...');
+        setMessageType('info');
+
+        const result = await fetchUser(username);
+        setMessage(result.message);
+        setMessageType('success');
+        onUserChange(username.toLowerCase(), true);
+      }
     } catch (error) {
-      console.error('Error:', error);
-      setResponse('Failed to connect to the server');
+      setMessage(error.message || 'Failed to load user data');
+      setMessageType('error');
+      onUserChange(username.toLowerCase(), false);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Chess.com UserName:</label>
+    <div className="toolbar-container">
+      <form onSubmit={handleSubmit} className="toolbar-form">
+        <div className="form-group">
+          <label htmlFor="username">Chess.com Username:</label>
           <input
             type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter username"
+            disabled={loading}
           />
         </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={loading} className="fetch-btn">
+          {loading ? 'Loading...' : 'Load Player'}
+        </button>
       </form>
-      {response && <p>{response}</p>}
+
+      {loading && <Loading message="Fetching player data..." />}
+
+      {message && !loading && (
+        <div className={`message ${messageType}`}>
+          {message}
+        </div>
+      )}
+
+      <div className="current-user">
+        <strong>Current Player:</strong> {currentUser}
+      </div>
     </div>
   );
 }

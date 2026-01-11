@@ -7,3 +7,5 @@ seaborn
 requests
 anytree
 uvicorn
+pytest
+httpx

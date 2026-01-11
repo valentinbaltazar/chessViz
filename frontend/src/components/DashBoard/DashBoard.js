@@ -1,39 +1,72 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
+import './DashBoard.css';
 
-const plot_desc = {
-    'elo_rating': "This plot shows an interesting way of looking at a player's elo rating over time.\
-    I think it is more enlightening than the basic elo plots on chess.com, here we see ‘nodes’ or\
-    circular regions where a player has spent time for a given elo space.\
-    It is cool to see how the nodes slowly progress from low 800 to higher ranges like 1400 if you are like me.",
-    'match_wins': "This plot is very simple, but it is useful for players, especially those just starting out. In theory a player should be close to 50-50 on either black or white, but as we see sometimes you win a lot more as white and other times as black. In my case early on I had a strong opening as white which I learned to play well, but I lacked as black to have a strong defensive opening. Then I learned the famous Caro-Kann defense as black and then that became my stronger side, and I won significantly more as black than as white in my higher elo matches.",
-    'openings': `This plot was me applying a tree data structure which I was learning about to my own chess matches. I have not seen a plot liek this anywhere but I found it very insightful. It is a tree structure over all my games starting with the opening move to the n-th move (defaults to 2 because it gets crazy to view). In chess usually the first few moves you make determine a lot of what happens in the game so just viewing the tree for the first 2-3 moves is very helpful. At the end node of each branch there is a number which is the times that mainline has been played in your games.
+const PLOT_DESCRIPTIONS = {
+  elo: {
+    title: 'ELO Progression',
+    description: `This interactive chart shows your ELO rating progression over time. Hover over data points to see details about each game including your opponent and the result. The trend line helps you visualize your overall improvement trajectory. Look for patterns in your rating - stable plateaus often indicate you've mastered certain concepts, while upward trends show active improvement.`,
+  },
+  wins: {
+    title: 'Wins by Color',
+    description: `This chart breaks down your monthly wins by color. In theory, a balanced player should have similar win rates as white and black, but most players have a preference. If you're winning significantly more as one color, consider studying your weaker side's openings. The grouped bars make it easy to spot months where you were particularly strong or weak.`,
+  },
+  openings: {
+    title: 'Opening Performance',
+    description: `Analyze your win rate across different openings. The stacked bars show wins, losses, and draws for each opening you've played multiple times. The percentage on the right shows your overall success rate. Use this to identify which openings are working for you and which might need more study. Focus on openings with high game counts but low win rates for the biggest improvement potential.`,
+  },
+  time: {
+    title: 'Time Analysis',
+    description: `Discover when you play your best chess! The top chart shows your win rate by hour of day - you might be surprised to find you play better at certain times. The bottom chart shows performance by day of week. Use these insights to schedule your important games during your peak performance windows.`,
+  },
+  tree: {
+    title: 'Opening Repertoire Tree',
+    description: `This tree visualization shows the opening moves you play most frequently. Each branch represents a move sequence, with numbers at the end showing how often you've played that line. Use this to understand your opening tendencies and identify gaps in your repertoire. If you always play the same lines, opponents can prepare against you!`,
+  },
+};
 
-        This can be helpful to track what type of games you play a lot and which you play less.`,
-        }
+function DashBoard({ plotType, username }) {
+  const info = PLOT_DESCRIPTIONS[plotType];
 
-
-function DashBoard({plotData}) {
-    const [option,setOption] = useState('')
-
-    useEffect(() => {
-        setOption(plotData.selectedOption)
-    },[plotData]
-    );
-
+  if (!info) {
     return (
-        <div>     
-            <div className="dashboard">
-                <h1>DashBoard</h1>
-                {
-                option === 'Option 1' ? plot_desc.elo_rating :
-                option === 'Option 2' ? plot_desc.match_wins :
-                option === 'Option 3' ? plot_desc.openings :
-                <text>Hi, welcome to ChessViz. I made this to help visualize my chess games over the years. I wanted 
-                    more in depth data anlysis tools to see what I can learn from my macthes to improve and also see my progress.
-                </text>}
-            </div>
+      <div className="dashboard">
+        <h1>Welcome to ChessViz</h1>
+        <p>
+          Analyze your Chess.com games with interactive visualizations. Enter your Chess.com username
+          in the menu to get started, or explore the pre-loaded data for the default player.
+        </p>
+        <div className="dashboard-features">
+          <div className="feature">
+            <strong>ELO Progression</strong> - Track your rating over time
+          </div>
+          <div className="feature">
+            <strong>Wins by Color</strong> - See if you prefer white or black
+          </div>
+          <div className="feature">
+            <strong>Opening Stats</strong> - Find your best and worst openings
+          </div>
+          <div className="feature">
+            <strong>Time Analysis</strong> - Discover when you play best
+          </div>
+          <div className="feature">
+            <strong>Opening Tree</strong> - Visualize your repertoire
+          </div>
         </div>
-    )
+      </div>
+    );
+  }
+
+  return (
+    <div className="dashboard">
+      <h1>{info.title}</h1>
+      <p>{info.description}</p>
+      {username && (
+        <div className="dashboard-player">
+          Showing data for: <strong>{username}</strong>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default DashBoard
+export default DashBoard;

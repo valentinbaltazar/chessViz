@@ -1,0 +1,25 @@
+.dataplot-container {
+  width: 100%;
+  min-height: 400px;
+}
+
+.dataplot-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  padding: 40px;
+}
+
+.dataplot-empty h2 {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.dataplot-empty p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+}
